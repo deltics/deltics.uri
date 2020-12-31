@@ -1,0 +1,22 @@
+{
+  "id":"deltics.uri",
+  "version":"",
+  "summary":"A class that encapsulates a Uri string.",
+  "tags":[
+    "deltics",
+    "uri"
+  ],
+  "copyright":"\u00A92020 Jolyon Direnko-Smith",
+  "language":"en",
+  "content":"source",
+  "dependencies":[
+    "deltics.inc:1.1.0",
+    "deltics.strings:1.1.0"
+  ],
+  "source":{
+      "files":[
+        "src\\deltics.uri.inc",
+        "src\\Deltics.Uri.pas"
+      ]
+    }
+}
