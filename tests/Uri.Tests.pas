@@ -8,7 +8,7 @@ interface
 
 
   type
-    UriComponents = record
+    UriValues = record
       Scheme: String;
       UserInfo: String;
       Host: String;
@@ -17,17 +17,20 @@ interface
       Query: String;
       Fragment: String;
       Authority: String;
-      constructor Init(const aScheme: String; const aUserInfo: String; const aHost: String; const aPort: Integer; const aPath: String; const aQuery: String; const aFragment: String; const aAuthority: String);
+    end;
+
+    _UriValues = class
+      class function Init(const aScheme: String; const aUserInfo: String; const aHost: String; const aPort: Integer; const aPath: String; const aQuery: String; const aFragment: String; const aAuthority: String): UriValues;
     end;
 
 
     TUriTests = class(TTest)
     private
-      procedure TestViaObject(const aUriString: String; const aComponents: UriComponents);
-      procedure TestViaInterface(const aUriString: String; const aComponents: UriComponents);
+      procedure TestViaObject(const aUriString: String; const aComponents: UriValues);
+      procedure TestViaInterface(const aUriString: String; const aComponents: UriValues);
     published
-      procedure UriComponentsAreCorrectlyIdentifiedInStringsUsingObject;
-      procedure UriComponentsAreCorrectlyIdentifiedInStringsUsingInterface;
+      procedure UriValuesAreCorrectlyIdentifiedInStringsUsingObject;
+      procedure UriValuesAreCorrectlyIdentifiedInStringsUsingInterface;
       procedure EmptyPasswordIsStrippedFromUserInfo;
       procedure NonEmptyPasswordIsPreservedInUserInfo;
       procedure UncPathIsParsedAsFileScheme;
@@ -46,27 +49,30 @@ implementation
 
 
 
-  constructor UriComponents.Init(const aScheme: String;
+  class function _UriValues.Init(const aScheme: String;
                                  const aUserInfo: String;
                                  const aHost: String;
                                  const aPort: Integer;
                                  const aPath: String;
                                  const aQuery: String;
                                  const aFragment: String;
-                                 const aAuthority: String);
+                                 const aAuthority: String): UriValues;
   begin
-    Scheme    := aScheme;
-    UserInfo  := aUserInfo;
-    Host      := aHost;
-    Port      := aPort;
-    Path      := aPath;
-    Query     := aQuery;
-    Fragment  := aFragment;
-    Authority := aAuthority;
+    with result do
+    begin
+      Scheme    := aScheme;
+      UserInfo  := aUserInfo;
+      Host      := aHost;
+      Port      := aPort;
+      Path      := aPath;
+      Query     := aQuery;
+      Fragment  := aFragment;
+      Authority := aAuthority;
+    end;
   end;
 
 
-  procedure TUriTests.TestViaObject(const aUriString: String; const aComponents: UriComponents);
+  procedure TUriTests.TestViaObject(const aUriString: String; const aComponents: UriValues);
   var
     uri: TUri;
   begin
@@ -86,7 +92,7 @@ implementation
     end;
   end;
 
-  procedure TUriTests.TestViaInterface(const aUriString: String; const aComponents: UriComponents);
+  procedure TUriTests.TestViaInterface(const aUriString: String; const aComponents: UriValues);
   var
     uri: IUri;
   begin
@@ -103,55 +109,55 @@ implementation
   end;
 
 
-  procedure TUriTests.UriComponentsAreCorrectlyIdentifiedInStringsUsingObject;
+  procedure TUriTests.UriValuesAreCorrectlyIdentifiedInStringsUsingObject;
   begin
-    TestViaObject('file:///c:/folder/subfolder', UriComponents.Init('file', '', '', -1, 'c:/folder/subfolder', '', '', ''));
-    TestViaObject('c:\duget\whatever',           UriComponents.Init('file', '', '', -1, 'c:/duget/whatever',   '', '', ''));
+    TestViaObject('file:///c:/folder/subfolder', _UriValues.Init('file', '', '', -1, 'c:/folder/subfolder', '', '', ''));
+    TestViaObject('c:\duget\whatever',           _UriValues.Init('file', '', '', -1, 'c:/duget/whatever',   '', '', ''));
 
-    TestViaObject('http://api.duget.org/v1/index.json',                                UriComponents.Init('http', '',      'api.duget.org', -1, 'v1/index.json',               '',       '',     'api.duget.org'));
-    TestViaObject('http://user@hostname:443/api.duget.org/v1/index.json?latest#frag',  UriComponents.Init('http', 'user',  'hostname',     443, 'api.duget.org/v1/index.json', 'latest', 'frag', 'user@hostname:443'));
-    TestViaObject('https://hostname:443/api.duget.org/v1/index.json?latest#frag',      UriComponents.Init('https', '',     'hostname',     443, 'api.duget.org/v1/index.json', 'latest', 'frag', 'hostname:443'));
-    TestViaObject('https://user@hostname/api.duget.org/v1/index.json?latest#frag',     UriComponents.Init('https', 'user', 'hostname',      -1, 'api.duget.org/v1/index.json', 'latest', 'frag', 'user@hostname'));
+    TestViaObject('http://api.duget.org/v1/index.json',                                _UriValues.Init('http', '',      'api.duget.org', -1, 'v1/index.json',               '',       '',     'api.duget.org'));
+    TestViaObject('http://user@hostname:443/api.duget.org/v1/index.json?latest#frag',  _UriValues.Init('http', 'user',  'hostname',     443, 'api.duget.org/v1/index.json', 'latest', 'frag', 'user@hostname:443'));
+    TestViaObject('https://hostname:443/api.duget.org/v1/index.json?latest#frag',      _UriValues.Init('https', '',     'hostname',     443, 'api.duget.org/v1/index.json', 'latest', 'frag', 'hostname:443'));
+    TestViaObject('https://user@hostname/api.duget.org/v1/index.json?latest#frag',     _UriValues.Init('https', 'user', 'hostname',      -1, 'api.duget.org/v1/index.json', 'latest', 'frag', 'user@hostname'));
   end;
 
 
-  procedure TUriTests.UriComponentsAreCorrectlyIdentifiedInStringsUsingInterface;
+  procedure TUriTests.UriValuesAreCorrectlyIdentifiedInStringsUsingInterface;
   begin
-    TestViaInterface('file:///c:/folder/subfolder', UriComponents.Init('file', '', '', -1, 'c:/folder/subfolder', '', '', ''));
-    TestViaInterface('c:\duget\whatever',           UriComponents.Init('file', '', '', -1, 'c:/duget/whatever',   '', '', ''));
+    TestViaInterface('file:///c:/folder/subfolder', _UriValues.Init('file', '', '', -1, 'c:/folder/subfolder', '', '', ''));
+    TestViaInterface('c:\duget\whatever',           _UriValues.Init('file', '', '', -1, 'c:/duget/whatever',   '', '', ''));
 
-    TestViaInterface('http://api.duget.org/v1/index.json',                                UriComponents.Init('http',  '',         'api.duget.org', -1, 'v1/index.json',               '',       '',     'api.duget.org'));
-    TestViaInterface('http://user@hostname:443/api.duget.org/v1/index.json?latest#frag',  UriComponents.Init('http',  'user',     'hostname',     443, 'api.duget.org/v1/index.json', 'latest', 'frag', 'user@hostname:443'));
-    TestViaInterface('https://hostname:443/api.duget.org/v1/index.json?latest#frag',      UriComponents.Init('https', '',         'hostname',     443, 'api.duget.org/v1/index.json', 'latest', 'frag', 'hostname:443'));
-    TestViaInterface('https://user@hostname/api.duget.org/v1/index.json?latest#frag',     UriComponents.Init('https', 'user',     'hostname',      -1, 'api.duget.org/v1/index.json', 'latest', 'frag', 'user@hostname'));
+    TestViaInterface('http://api.duget.org/v1/index.json',                                _UriValues.Init('http',  '',         'api.duget.org', -1, 'v1/index.json',               '',       '',     'api.duget.org'));
+    TestViaInterface('http://user@hostname:443/api.duget.org/v1/index.json?latest#frag',  _UriValues.Init('http',  'user',     'hostname',     443, 'api.duget.org/v1/index.json', 'latest', 'frag', 'user@hostname:443'));
+    TestViaInterface('https://hostname:443/api.duget.org/v1/index.json?latest#frag',      _UriValues.Init('https', '',         'hostname',     443, 'api.duget.org/v1/index.json', 'latest', 'frag', 'hostname:443'));
+    TestViaInterface('https://user@hostname/api.duget.org/v1/index.json?latest#frag',     _UriValues.Init('https', 'user',     'hostname',      -1, 'api.duget.org/v1/index.json', 'latest', 'frag', 'user@hostname'));
   end;
 
 
   procedure TUriTests.EmptyPasswordIsStrippedFromUserInfo;
   begin
-    TestViaObject('https://user:@hostname/api.duget.org/v1/index.json?latest#frag',       UriComponents.Init('https', 'user',     'hostname',      -1, 'api.duget.org/v1/index.json', 'latest', 'frag', 'user@hostname'));
-    TestViaInterface('https://user:@hostname/api.duget.org/v1/index.json?latest#frag',    UriComponents.Init('https', 'user',     'hostname',      -1, 'api.duget.org/v1/index.json', 'latest', 'frag', 'user@hostname'));
+    TestViaObject('https://user:@hostname/api.duget.org/v1/index.json?latest#frag',       _UriValues.Init('https', 'user',     'hostname',      -1, 'api.duget.org/v1/index.json', 'latest', 'frag', 'user@hostname'));
+    TestViaInterface('https://user:@hostname/api.duget.org/v1/index.json?latest#frag',    _UriValues.Init('https', 'user',     'hostname',      -1, 'api.duget.org/v1/index.json', 'latest', 'frag', 'user@hostname'));
   end;
 
 
   procedure TUriTests.NonEmptyPasswordIsPreservedInUserInfo;
   begin
-    TestViaObject('https://user:pwd@hostname/api.duget.org/v1/index.json?latest#frag', UriComponents.Init('https', 'user:pwd', 'hostname',      -1, 'api.duget.org/v1/index.json', 'latest', 'frag', 'user:pwd@hostname'));
-    TestViaInterface('https://user:pwd@hostname/api.duget.org/v1/index.json?latest#frag', UriComponents.Init('https', 'user:pwd', 'hostname',      -1, 'api.duget.org/v1/index.json', 'latest', 'frag', 'user:pwd@hostname'));
+    TestViaObject('https://user:pwd@hostname/api.duget.org/v1/index.json?latest#frag', _UriValues.Init('https', 'user:pwd', 'hostname',      -1, 'api.duget.org/v1/index.json', 'latest', 'frag', 'user:pwd@hostname'));
+    TestViaInterface('https://user:pwd@hostname/api.duget.org/v1/index.json?latest#frag', _UriValues.Init('https', 'user:pwd', 'hostname',      -1, 'api.duget.org/v1/index.json', 'latest', 'frag', 'user:pwd@hostname'));
   end;
 
 
   procedure TUriTests.UncPathIsParsedAsFileScheme;
   begin
-    TestViaObject('\\hostname\share\path', UriComponents.Init('file', '', 'hostname', -1, 'share/path', '', '', 'hostname'));
-    TestViaInterface('\\hostname\share\path', UriComponents.Init('file', '', 'hostname', -1, 'share/path', '', '', 'hostname'));
+    TestViaObject('\\hostname\share\path', _UriValues.Init('file', '', 'hostname', -1, 'share/path', '', '', 'hostname'));
+    TestViaInterface('\\hostname\share\path', _UriValues.Init('file', '', 'hostname', -1, 'share/path', '', '', 'hostname'));
   end;
 
 
   procedure TUriTests.DriveLetterPathIsParsedAsFileScheme;
   begin
-    TestViaObject('c:\folder\path', UriComponents.Init('file', '', '', -1, 'c:/folder/path', '', '', ''));
-    TestViaInterface('c:\folder\path', UriComponents.Init('file', '', '', -1, 'c:/folder/path', '', '', ''));
+    TestViaObject('c:\folder\path', _UriValues.Init('file', '', '', -1, 'c:/folder/path', '', '', ''));
+    TestViaInterface('c:\folder\path', _UriValues.Init('file', '', '', -1, 'c:/folder/path', '', '', ''));
   end;
 
 
