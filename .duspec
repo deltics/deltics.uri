@@ -11,7 +11,9 @@
   "content":"source",
   "dependencies":[
     "deltics.inc:1.1.0",
-    "deltics.strings:1.1.0"
+    "deltics.exceptions:1.1.0",
+    "deltics.interfacedobjects:1.2.0",
+    "deltics.strings:1.1.1"
   ],
   "source":{
       "files":[
