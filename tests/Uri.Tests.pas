@@ -172,7 +172,7 @@ implementation
         sut.AsFilePath;
 
       except
-        Test.RaisedException(EInvalidOperation);
+        Test.Raised(EInvalidOperation);
       end;
     end;
 

@@ -4,8 +4,8 @@
 interface
 
   uses
-    Deltics.InterfacedObjects,
-    Deltics.Strings;
+    Deltics.InterfacedObjects;
+
 
   type
     IUri = interface
@@ -93,7 +93,10 @@ implementation
   uses
     SysUtils,
     Deltics.Exceptions,
-    Deltics.Strings.Templates;
+    Deltics.StringLists,
+    Deltics.StringParsers,
+    Deltics.Strings,
+    Deltics.StringTemplates;
 
 
 { TUri }
@@ -122,12 +125,12 @@ implementation
     if fPath = '' then
       raise EInvalidOperation.CreateFmt('''%s'' is not a valid filepath Uri', [AsString]);
 
-    if NOT STR.Contains(fPath, ':') then
+    if NOT Str.Contains(fPath, ':') then
       result := '//' + fHost + '/' + fPath
     else
       result := fPath;
 
-    result := STR.ReplaceAll(result, '/', '\');
+    result := Str.ReplaceAll(result, '/', '\');
   end;
 
 
@@ -252,7 +255,7 @@ implementation
 
           if vars.ContainsName('userinfo')  then UserInfo   := vars.Values['userinfo'];
           if vars.ContainsName('host')      then fHost      := vars.Values['host'];
-          if vars.ContainsName('port')      then fPort      := STR.AsInteger(vars.Values['port']);
+          if vars.ContainsName('port')      then fPort      := Parse(vars.Values['port']).AsInteger;
           if vars.ContainsName('path')      then fPath      := vars.Values['path'];
           if vars.ContainsName('query')     then fQuery     := vars.Values['query'];
           if vars.ContainsName('fragment')  then fFragment  := vars.Values['fragment'];
@@ -262,7 +265,7 @@ implementation
           fScheme := 'file';
           fPath   := vars.Values['drive'] + ':/';
           if vars.ContainsName('path') then
-            fPath := fPath + STR.ReplaceAll(vars.Values['path'], '\', '/');
+            fPath := fPath + Str.ReplaceAll(vars.Values['path'], '\', '/');
         end
         else if vars.ContainsName('path') then
         begin
@@ -271,7 +274,7 @@ implementation
           if vars.ContainsName('host') then
             fHost := vars.Values['host'];
 
-          fPath := STR.ReplaceAll(vars.Values['path'], '\', '/');
+          fPath := Str.ReplaceAll(vars.Values['path'], '\', '/');
         end;
       end;
 
@@ -316,7 +319,7 @@ implementation
     fUserInfo := aValue;
 
     if STR.EndsWith(fUserInfo, ':') then
-      fUserInfo := STR.RTrim(fUserInfo, 1);
+      fUserInfo := Str.RTrim(fUserInfo, 1);
   end;
 
 
